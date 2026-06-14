@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="一个适合部署到 GitHub Pages 的响应式照片展示墙。"
+    />
+    <title>照片展示墙</title>
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <h1>照片墙</h1>
+          <p>按地点、人物和瞬间整理你的影像记录</p>
+        </div>
+      </div>
+
+      <div class="toolbar" aria-label="照片墙工具栏">
+        <label class="search">
+          <span class="visually-hidden">搜索照片</span>
+          <input id="searchInput" type="search" placeholder="搜索标题、地点或标签" />
+        </label>
+        <label class="upload-button">
+          <input id="photoUpload" type="file" accept="image/*" multiple />
+          <span>添加照片</span>
+        </label>
+      </div>
+    </header>
+
+    <main>
+      <section class="overview" aria-label="照片墙概览">
+        <article class="stat">
+          <strong id="totalCount">0</strong>
+          <span>张照片</span>
+        </article>
+        <article class="stat">
+          <strong id="albumCount">0</strong>
+          <span>个分类</span>
+        </article>
+        <article class="stat">
+          <strong id="yearRange">-</strong>
+          <span>时间跨度</span>
+        </article>
+      </section>
+
+      <nav class="filters" aria-label="照片分类">
+        <button class="filter is-active" type="button" data-filter="all">全部</button>
+        <button class="filter" type="button" data-filter="travel">旅行</button>
+        <button class="filter" type="button" data-filter="city">城市</button>
+        <button class="filter" type="button" data-filter="people">人物</button>
+        <button class="filter" type="button" data-filter="nature">自然</button>
+      </nav>
+
+      <section id="gallery" class="gallery" aria-live="polite"></section>
+
+      <p id="emptyState" class="empty-state" hidden>
+        没有匹配的照片。可以换个关键词，或切回全部分类。
+      </p>
+    </main>
+
+    <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="照片预览">
+      <button id="closeLightbox" class="icon-button close-button" type="button" aria-label="关闭预览">
+        ×
+      </button>
+      <button id="prevPhoto" class="icon-button nav-button nav-button-left" type="button" aria-label="上一张">
+        ‹
+      </button>
+      <figure class="lightbox-panel">
+        <img id="lightboxImage" alt="" />
+        <figcaption>
+          <strong id="lightboxTitle"></strong>
+          <span id="lightboxMeta"></span>
+        </figcaption>
+      </figure>
+      <button id="nextPhoto" class="icon-button nav-button nav-button-right" type="button" aria-label="下一张">
+        ›
+      </button>
+    </div>
+
+    <script src="./script.js" defer></script>
+  </body>
+</html>
