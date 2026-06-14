@@ -1,10 +1,10 @@
 const categoryLabels = {
   all: "全部",
-  date: "约会章节",
-  travel: "一起看展",
-  daily: "日常小事",
-  anniversary: "纪念盖章",
-  surprise: "特别心意"
+  date: "一起出门",
+  travel: "看展",
+  daily: "日常",
+  anniversary: "纪念",
+  surprise: "心意"
 };
 
 const samplePhotos = [
@@ -17,10 +17,6 @@ const samplePhotos = [
     tags: ["赵霞", "手写", "名字", "认真"],
     note: "把一个名字一遍遍写满整页，像是在认真留下喜欢的痕迹。",
     ratio: "3 / 4",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/name-practice.jpg"
   },
   {
@@ -32,10 +28,6 @@ const samplePhotos = [
     tags: ["约会", "自拍", "小龙虾", "笑脸"],
     note: "一起吃小龙虾的店里，先把两个人和热闹的背景都装进镜头。",
     ratio: "1900 / 1424",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/rice-noodle-selfie.jpg"
   },
   {
@@ -47,10 +39,6 @@ const samplePhotos = [
     tags: ["约会", "自拍", "比耶", "小龙虾"],
     note: "同一家小龙虾店里的另一张照片，一个比耶，一个靠近镜头。",
     ratio: "1900 / 1424",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/peace-selfie.jpg"
   },
   {
@@ -62,10 +50,6 @@ const samplePhotos = [
     tags: ["晚餐", "小龙虾", "汽水", "约会"],
     note: "辣味小龙虾、烤翅、凉菜和汽水，是一顿很实在的开心。",
     ratio: "4 / 3",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/crayfish-dinner.jpg"
   },
   {
@@ -77,10 +61,6 @@ const samplePhotos = [
     tags: ["展览", "博物馆", "大洋洲", "旅行"],
     note: "蓝色展墙和木船把那次看展的第一眼留了下来。",
     ratio: "4 / 3",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/ocean-art-museum.jpg"
   },
   {
@@ -92,10 +72,6 @@ const samplePhotos = [
     tags: ["展览", "木雕", "博物馆", "安静"],
     note: "灯光照在木雕和影子上，是看展途中停下来的一刻。",
     ratio: "3 / 4",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/wooden-statues.jpg"
   },
   {
@@ -107,10 +83,6 @@ const samplePhotos = [
     tags: ["调香", "体验", "香水", "手作"],
     note: "滴管、琥珀色瓶子和配方卡，记录了一次一起动手做香水的体验。",
     ratio: "4 / 3",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/perfume-lab.jpg"
   },
   {
@@ -122,10 +94,6 @@ const samplePhotos = [
     tags: ["证书", "调香", "纪念", "完成"],
     note: "体验结束后留下的证书，比照片更像一次正式盖章的纪念。",
     ratio: "4 / 3",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/perfumer-certificate.jpg"
   },
   {
@@ -137,10 +105,6 @@ const samplePhotos = [
     tags: ["车展", "哈哈镜", "自拍", "好玩"],
     note: "镜面把表情拉成了夸张的样子，这种不好好拍照的瞬间反而最鲜活。",
     ratio: "3 / 4",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/mirror-car-show.jpg"
   },
   {
@@ -152,10 +116,6 @@ const samplePhotos = [
     tags: ["Insta360", "影石", "防被骂神器", "P图", "合照", "逛店"],
     note: "一起去逛 Insta360 的店铺，体验影石的防被骂神器时拍下的合照，这是她 P 图之后留下的版本。",
     ratio: "3 / 4",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/insta360-edited-selfie.jpg"
   },
   {
@@ -167,10 +127,6 @@ const samplePhotos = [
     tags: ["湾区之眼书城", "楼顶", "暴雨", "BOOK"],
     note: "在湾区之眼书城楼顶，外面下着大暴雨，BOOK 灯牌和远处的城市一起亮起来。",
     ratio: "4 / 3",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/book-rooftop-rain.jpg"
   },
   {
@@ -182,10 +138,6 @@ const samplePhotos = [
     tags: ["福尔摩斯", "电话亭", "展览", "马车"],
     note: "福尔摩斯展里被玫瑰围住的电话亭，后面还一起坐了马车。",
     ratio: "3 / 4",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/holmes-phone-booth.jpg"
   },
   {
@@ -197,10 +149,6 @@ const samplePhotos = [
     tags: ["中山公园", "约会", "猫猫", "很乖", "蹭蹭"],
     note: "一起去中山公园约会时遇到的猫猫，很乖，一直在蹭我们两个。",
     ratio: "3 / 4",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/zhongshan-park-cat.jpg"
   },
   {
@@ -212,10 +160,6 @@ const samplePhotos = [
     tags: ["西湾红树林", "海边", "散步", "吹风", "天空", "红树林"],
     note: "一起去西湾红树林，在海边散步吹风，看红树林时拍下的天空和海面灯光。",
     ratio: "4 / 3",
-    source: "curated",
-    kind: "image",
-    mime: "image/jpeg",
-    duration: 0,
     src: "./photos/west-bay-mangrove-sky.jpg"
   }
 ];
@@ -234,7 +178,6 @@ const categoryCount = document.querySelector("#categoryCount");
 const yearRange = document.querySelector("#yearRange");
 const lightbox = document.querySelector("#lightbox");
 const lightboxImage = document.querySelector("#lightboxImage");
-const lightboxVideo = document.querySelector("#lightboxVideo");
 const lightboxTitle = document.querySelector("#lightboxTitle");
 const lightboxMeta = document.querySelector("#lightboxMeta");
 const lightboxNote = document.querySelector("#lightboxNote");
@@ -263,41 +206,18 @@ function getPhotoText(photo) {
       photo.location,
       photo.date,
       photo.note,
-      getMediaTypeLabel(photo),
+      "照片",
       categoryLabels[photo.category],
       ...(photo.tags || [])
     ].join(" ")
   );
 }
 
-function getMediaKind(photo) {
-  if (photo.kind) return photo.kind;
-  if (photo.type) return photo.type;
-  if (typeof photo.src === "string" && photo.src.startsWith("data:video/")) return "video";
-  return "image";
-}
-
-function getMediaTypeLabel(photo) {
-  return getMediaKind(photo) === "video" ? "短视频" : "照片";
-}
-
-function formatDuration(seconds) {
-  if (!Number.isFinite(seconds) || seconds <= 0) return "";
-  const rounded = Math.round(seconds);
-  const minutes = Math.floor(rounded / 60);
-  const rest = String(rounded % 60).padStart(2, "0");
-  return `${minutes}:${rest}`;
-}
-
-function getMediaMetaParts(photo) {
-  const kind = getMediaKind(photo);
-  const duration = kind === "video" ? formatDuration(photo.duration) : "";
+function getPhotoMetaParts(photo) {
   return [
-    getMediaTypeLabel(photo),
     categoryLabels[photo.category] || "回忆",
     photo.location || "未记录地点",
-    photo.date ? formatDate(photo.date) : "",
-    duration
+    photo.date ? formatDate(photo.date) : ""
   ].filter(Boolean);
 }
 
@@ -313,18 +233,7 @@ function updateStats() {
     firstYear && lastYear ? (firstYear === lastYear ? String(firstYear) : `${firstYear}-${lastYear}`) : "两个人";
 }
 
-function createMediaElement(photo, preview = true) {
-  if (getMediaKind(photo) === "video") {
-    const video = document.createElement("video");
-    video.src = photo.src;
-    video.muted = preview;
-    video.loop = preview;
-    video.playsInline = true;
-    video.preload = "metadata";
-    if (!preview) video.controls = true;
-    return video;
-  }
-
+function createPhotoElement(photo) {
   const image = document.createElement("img");
   image.src = photo.src;
   image.alt = photo.title;
@@ -334,37 +243,29 @@ function createMediaElement(photo, preview = true) {
 
 function createPhotoCard(photo, visibleIndex, pageIndex) {
   const button = document.createElement("button");
-  const media = createMediaElement(photo);
+  const image = createPhotoElement(photo);
   const info = document.createElement("span");
   const page = document.createElement("span");
   const title = document.createElement("strong");
   const meta = document.createElement("span");
   const note = document.createElement("em");
-  const kind = getMediaKind(photo);
   const tilt = ((pageIndex % 5) - 2) * 0.36;
 
   button.className = "photo-card";
   button.type = "button";
   button.style.setProperty("--ratio", photo.ratio || "4 / 5");
   button.style.setProperty("--tilt", `${tilt}deg`);
-  button.setAttribute("aria-label", `打开${getMediaTypeLabel(photo)}：${photo.title}`);
+  button.setAttribute("aria-label", `打开照片：${photo.title}`);
 
   info.className = "photo-info";
   page.className = "page-label";
   page.textContent = `第 ${String(pageIndex + 1).padStart(2, "0")} 页`;
   title.textContent = photo.title;
-  meta.textContent = getMediaMetaParts(photo).join(" · ");
+  meta.textContent = getPhotoMetaParts(photo).join(" · ");
   note.textContent = photo.note || "";
   info.append(page, title, meta);
   if (photo.note) info.append(note);
-  button.append(media, info);
-
-  if (kind === "video") {
-    const videoBadge = document.createElement("span");
-    videoBadge.className = "media-badge";
-    videoBadge.textContent = formatDuration(photo.duration) || "短视频";
-    button.append(videoBadge);
-  }
+  button.append(image, info);
 
   button.addEventListener("click", () => openLightbox(visibleIndex));
   return button;
@@ -394,23 +295,12 @@ function openLightbox(index) {
   const photo = visiblePhotos[activeIndex];
   if (!photo) return;
 
-  const kind = getMediaKind(photo);
-  if (kind === "video") {
-    lightboxImage.hidden = true;
-    lightboxImage.removeAttribute("src");
-    lightboxVideo.hidden = false;
-    lightboxVideo.src = photo.src;
-  } else {
-    lightboxVideo.pause();
-    lightboxVideo.hidden = true;
-    lightboxVideo.removeAttribute("src");
-    lightboxImage.hidden = false;
-    lightboxImage.src = photo.src;
-    lightboxImage.alt = photo.title;
-  }
+  lightboxImage.hidden = false;
+  lightboxImage.src = photo.src;
+  lightboxImage.alt = photo.title;
 
   lightboxTitle.textContent = photo.title;
-  lightboxMeta.textContent = getMediaMetaParts(photo).join(" · ");
+  lightboxMeta.textContent = getPhotoMetaParts(photo).join(" · ");
   lightboxNote.textContent = photo.note || "";
   lightbox.classList.add("is-open");
   lightbox.setAttribute("aria-hidden", "false");
@@ -422,9 +312,6 @@ function hideLightbox() {
   lightbox.setAttribute("aria-hidden", "true");
   lightboxImage.hidden = false;
   lightboxImage.removeAttribute("src");
-  lightboxVideo.pause();
-  lightboxVideo.hidden = true;
-  lightboxVideo.removeAttribute("src");
 }
 
 function showPhoto(offset) {
