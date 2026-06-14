@@ -3,6 +3,7 @@ const DB_VERSION = 1;
 const STORE_NAME = "photos";
 const MAX_IMAGE_SIZE = 1800;
 const JPEG_QUALITY = 0.86;
+const MAX_VIDEO_SIZE_BYTES = 80 * 1024 * 1024;
 
 const categoryLabels = {
   all: "全部",
@@ -139,6 +140,7 @@ const exportButton = document.querySelector("#exportButton");
 const importBackup = document.querySelector("#importBackup");
 const lightbox = document.querySelector("#lightbox");
 const lightboxImage = document.querySelector("#lightboxImage");
+const lightboxVideo = document.querySelector("#lightboxVideo");
 const lightboxTitle = document.querySelector("#lightboxTitle");
 const lightboxMeta = document.querySelector("#lightboxMeta");
 const lightboxNote = document.querySelector("#lightboxNote");
@@ -177,6 +179,7 @@ function getPhotoText(photo) {
       photo.location,
       photo.date,
       photo.note,
+      getMediaTypeLabel(photo),
       categoryLabels[photo.category],
       ...(photo.tags || [])
     ].join(" ")
@@ -185,6 +188,34 @@ function getPhotoText(photo) {
 
 function setStatus(message) {
   storageStatus.textContent = message;
+}
+
+function getMediaKind(photo) {
+  if (photo.kind) return photo.kind;
+  if (photo.type) return photo.type;
+  if (typeof photo.src === "string" && photo.src.startsWith("data:video/")) return "video";
+  return "image";
+}
+
+function getMediaTypeLabel(photo) {
+  return getMediaKind(photo) === "video" ? "短视频" : "照片";
+}
+
+function formatDuration(seconds) {
+  if (!Number.isFinite(seconds) || seconds <= 0) return "";
+  const rounded = Math.round(seconds);
+  const minutes = Math.floor(rounded / 60);
+  const rest = String(rounded % 60).padStart(2, "0");
+  return `${minutes}:${rest}`;
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }
 
 function openDb() {
@@ -274,6 +305,57 @@ async function compressImage(file) {
   };
 }
 
+function loadVideoMetadata(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    video.muted = true;
+    video.playsInline = true;
+    video.onloadedmetadata = () => {
+      const width = video.videoWidth || 16;
+      const height = video.videoHeight || 9;
+      const duration = Number.isFinite(video.duration) ? video.duration : 0;
+      URL.revokeObjectURL(url);
+      resolve({ width, height, duration });
+    };
+    video.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error(`无法读取视频：${file.name}`));
+    };
+    video.src = url;
+  });
+}
+
+async function prepareMedia(file) {
+  if (file.type.startsWith("image/")) {
+    const image = await compressImage(file);
+    return {
+      kind: "image",
+      mime: "image/jpeg",
+      duration: 0,
+      ...image
+    };
+  }
+
+  if (file.type.startsWith("video/")) {
+    if (file.size > MAX_VIDEO_SIZE_BYTES) {
+      throw new Error(`视频过大：${file.name}`);
+    }
+
+    const metadata = await loadVideoMetadata(file);
+    return {
+      kind: "video",
+      mime: file.type || "video/mp4",
+      duration: metadata.duration,
+      ratio: `${metadata.width} / ${metadata.height}`,
+      src: await readFileAsDataUrl(file)
+    };
+  }
+
+  throw new Error(`不支持的文件类型：${file.name}`);
+}
+
 function rebuildPhotos() {
   localPhotos.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
   photos = [...localPhotos, ...samplePhotos];
@@ -290,30 +372,53 @@ function updateStats() {
     firstYear && lastYear ? (firstYear === lastYear ? String(firstYear) : `${firstYear}-${lastYear}`) : "-";
 }
 
+function createMediaElement(photo, preview = true) {
+  if (getMediaKind(photo) === "video") {
+    const video = document.createElement("video");
+    video.src = photo.src;
+    video.muted = preview;
+    video.loop = preview;
+    video.playsInline = true;
+    video.preload = "metadata";
+    if (!preview) video.controls = true;
+    return video;
+  }
+
+  const image = document.createElement("img");
+  image.src = photo.src;
+  image.alt = photo.title;
+  image.loading = "lazy";
+  return image;
+}
+
 function createPhotoCard(photo, index) {
   const button = document.createElement("button");
-  const image = document.createElement("img");
+  const media = createMediaElement(photo);
   const info = document.createElement("span");
   const title = document.createElement("strong");
   const meta = document.createElement("span");
   const note = document.createElement("em");
+  const kind = getMediaKind(photo);
 
   button.className = "photo-card";
   button.type = "button";
   button.style.setProperty("--ratio", photo.ratio || "4 / 5");
-  button.setAttribute("aria-label", `打开照片：${photo.title}`);
-
-  image.src = photo.src;
-  image.alt = photo.title;
-  image.loading = "lazy";
+  button.setAttribute("aria-label", `打开${getMediaTypeLabel(photo)}：${photo.title}`);
 
   info.className = "photo-info";
   title.textContent = photo.title;
-  meta.textContent = `${categoryLabels[photo.category] || "回忆"} · ${photo.location || "未记录地点"} · ${formatDate(photo.date)}`;
+  meta.textContent = `${getMediaTypeLabel(photo)} · ${categoryLabels[photo.category] || "回忆"} · ${photo.location || "未记录地点"} · ${formatDate(photo.date)}`;
   note.textContent = photo.note || "";
   info.append(title, meta);
   if (photo.note) info.append(note);
-  button.append(image, info);
+  button.append(media, info);
+
+  if (kind === "video") {
+    const videoBadge = document.createElement("span");
+    videoBadge.className = "media-badge";
+    videoBadge.textContent = formatDuration(photo.duration) || "短视频";
+    button.append(videoBadge);
+  }
 
   if (photo.source === "local") {
     const badge = document.createElement("span");
@@ -349,10 +454,29 @@ function openLightbox(index) {
   const photo = visiblePhotos[activeIndex];
   if (!photo) return;
 
-  lightboxImage.src = photo.src;
-  lightboxImage.alt = photo.title;
+  const kind = getMediaKind(photo);
+  if (kind === "video") {
+    lightboxImage.hidden = true;
+    lightboxImage.removeAttribute("src");
+    lightboxVideo.hidden = false;
+    lightboxVideo.src = photo.src;
+  } else {
+    lightboxVideo.pause();
+    lightboxVideo.hidden = true;
+    lightboxVideo.removeAttribute("src");
+    lightboxImage.hidden = false;
+    lightboxImage.src = photo.src;
+    lightboxImage.alt = photo.title;
+  }
+
   lightboxTitle.textContent = photo.title;
-  lightboxMeta.textContent = `${categoryLabels[photo.category] || "回忆"} · ${photo.location || "未记录地点"} · ${formatDate(photo.date)}`;
+  lightboxMeta.textContent = [
+    getMediaTypeLabel(photo),
+    categoryLabels[photo.category] || "回忆",
+    photo.location || "未记录地点",
+    formatDate(photo.date),
+    kind === "video" ? formatDuration(photo.duration) : ""
+  ].filter(Boolean).join(" · ");
   lightboxNote.textContent = photo.note || "";
   deletePhoto.hidden = photo.source !== "local";
   lightbox.classList.add("is-open");
@@ -363,7 +487,11 @@ function openLightbox(index) {
 function hideLightbox() {
   lightbox.classList.remove("is-open");
   lightbox.setAttribute("aria-hidden", "true");
+  lightboxImage.hidden = false;
   lightboxImage.removeAttribute("src");
+  lightboxVideo.pause();
+  lightboxVideo.hidden = true;
+  lightboxVideo.removeAttribute("src");
 }
 
 function showPhoto(offset) {
@@ -375,25 +503,25 @@ function showPhoto(offset) {
 function resetUploadForm() {
   uploadForm.reset();
   photoDate.value = new Date().toISOString().slice(0, 10);
-  selectedFileText.textContent = "还没有选择照片";
+  selectedFileText.textContent = "还没有选择文件";
 }
 
 async function handleUpload(event) {
   event.preventDefault();
-  const files = [...photoUpload.files].filter((file) => file.type.startsWith("image/"));
+  const files = [...photoUpload.files].filter((file) => file.type.startsWith("image/") || file.type.startsWith("video/"));
 
   if (files.length === 0) {
-    setStatus("请选择至少一张图片。");
+    setStatus("请选择至少一张照片或一个短视频。");
     return;
   }
 
   const submitButton = uploadForm.querySelector("button[type='submit']");
   submitButton.disabled = true;
-  setStatus(`正在保存 ${files.length} 张照片...`);
+  setStatus(`正在保存 ${files.length} 个文件...`);
 
   try {
     for (const [index, file] of files.entries()) {
-      const compressed = await compressImage(file);
+      const media = await prepareMedia(file);
       const hasSharedTitle = files.length === 1 && normalize(photoTitle.value);
       const photo = {
         id: createId(),
@@ -401,10 +529,18 @@ async function handleUpload(event) {
         location: photoLocation.value.trim() || "未记录地点",
         date: photoDate.value || new Date().toISOString().slice(0, 10),
         category: photoCategory.value,
-        tags: [categoryLabels[photoCategory.value], photoLocation.value.trim(), "本机上传"].filter(Boolean),
+        tags: [
+          categoryLabels[photoCategory.value],
+          photoLocation.value.trim(),
+          media.kind === "video" ? "短视频" : "照片",
+          "本机上传"
+        ].filter(Boolean),
         note: photoNote.value.trim(),
-        ratio: compressed.ratio,
-        src: compressed.src,
+        kind: media.kind,
+        mime: media.mime,
+        duration: media.duration,
+        ratio: media.ratio,
+        src: media.src,
         source: "local",
         createdAt: Date.now() + index
       };
@@ -415,10 +551,10 @@ async function handleUpload(event) {
 
     resetUploadForm();
     render();
-    setStatus(`已保存 ${files.length} 张照片。`);
+    setStatus(`已保存 ${files.length} 个回忆。`);
   } catch (error) {
     console.error(error);
-    setStatus("保存失败。图片可能过大，或浏览器存储空间不足。");
+    setStatus(`保存失败。视频需小于 ${Math.round(MAX_VIDEO_SIZE_BYTES / 1024 / 1024)}MB，或浏览器存储空间不足。`);
   } finally {
     submitButton.disabled = false;
   }
@@ -426,7 +562,7 @@ async function handleUpload(event) {
 
 function exportBackup() {
   if (localPhotos.length === 0) {
-    setStatus("还没有本机上传的照片可导出。");
+    setStatus("还没有本机上传的内容可导出。");
     return;
   }
 
@@ -443,7 +579,7 @@ function exportBackup() {
   anchor.download = `couple-photo-space-${new Date().toISOString().slice(0, 10)}.json`;
   anchor.click();
   URL.revokeObjectURL(url);
-  setStatus(`已导出 ${localPhotos.length} 张本机照片。`);
+  setStatus(`已导出 ${localPhotos.length} 个本机回忆。`);
 }
 
 async function importPhotos(file) {
@@ -455,16 +591,22 @@ async function importPhotos(file) {
     if (!Array.isArray(incoming)) throw new Error("备份格式不正确");
 
     const validPhotos = incoming
-      .filter((photo) => typeof photo?.src === "string" && photo.src.startsWith("data:image/"))
+      .filter((photo) => {
+        if (typeof photo?.src !== "string") return false;
+        return photo.src.startsWith("data:image/") || photo.src.startsWith("data:video/");
+      })
       .map((photo) => ({
         id: createId(),
-        title: String(photo.title || "导入的照片"),
+        title: String(photo.title || "导入的回忆"),
         location: String(photo.location || "未记录地点"),
         date: String(photo.date || new Date().toISOString().slice(0, 10)),
         category: categoryLabels[photo.category] ? photo.category : "daily",
         tags: Array.isArray(photo.tags) ? photo.tags.map(String) : ["导入"],
         note: String(photo.note || ""),
         ratio: String(photo.ratio || "4 / 5"),
+        kind: photo.kind === "video" || photo.src.startsWith("data:video/") ? "video" : "image",
+        mime: String(photo.mime || ""),
+        duration: Number(photo.duration || 0),
         src: photo.src,
         source: "local",
         createdAt: Date.now()
@@ -477,17 +619,17 @@ async function importPhotos(file) {
 
     importBackup.value = "";
     render();
-    setStatus(`已导入 ${validPhotos.length} 张照片。`);
+    setStatus(`已导入 ${validPhotos.length} 个回忆。`);
   } catch (error) {
     console.error(error);
-    setStatus("导入失败，请确认文件是这个照片空间导出的 JSON 备份。");
+    setStatus("导入失败，请确认文件是这个影像空间导出的 JSON 备份。");
   }
 }
 
 async function deleteActivePhoto() {
   const photo = visiblePhotos[activeIndex];
   if (!photo || photo.source !== "local") return;
-  const ok = window.confirm(`删除「${photo.title}」？这个操作只会删除当前浏览器里的本机照片。`);
+  const ok = window.confirm(`删除「${photo.title}」？这个操作只会删除当前浏览器里的本机内容。`);
   if (!ok) return;
 
   try {
@@ -495,7 +637,7 @@ async function deleteActivePhoto() {
     localPhotos = localPhotos.filter((item) => item.id !== photo.id);
     hideLightbox();
     render();
-    setStatus("已删除本机照片。");
+    setStatus("已删除本机内容。");
   } catch (error) {
     console.error(error);
     setStatus("删除失败，请稍后再试。");
@@ -513,7 +655,7 @@ filterButtons.forEach((button) => {
 searchInput.addEventListener("input", renderGallery);
 photoUpload.addEventListener("change", () => {
   const count = photoUpload.files.length;
-  selectedFileText.textContent = count ? `已选择 ${count} 张照片` : "还没有选择照片";
+  selectedFileText.textContent = count ? `已选择 ${count} 个文件` : "还没有选择文件";
 });
 uploadForm.addEventListener("submit", handleUpload);
 exportButton.addEventListener("click", exportBackup);
@@ -539,7 +681,7 @@ async function init() {
 
   try {
     localPhotos = await getAllLocalPhotos();
-    setStatus(localPhotos.length ? `已载入 ${localPhotos.length} 张本机照片。` : "");
+    setStatus(localPhotos.length ? `已载入 ${localPhotos.length} 个本机回忆。` : "");
   } catch (error) {
     console.error(error);
     setStatus("当前浏览器无法使用本机持久保存。");
