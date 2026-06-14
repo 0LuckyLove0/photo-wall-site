@@ -149,6 +149,36 @@ const samplePhotos = [
     mime: "image/jpeg",
     duration: 0,
     src: "./photos/mirror-car-show.jpg"
+  },
+  {
+    id: "memory-book-rooftop-rain",
+    title: "暴雨里的 BOOK 灯牌",
+    location: "湾区之眼书城楼顶",
+    date: "",
+    category: "date",
+    tags: ["湾区之眼书城", "楼顶", "暴雨", "BOOK"],
+    note: "在湾区之眼书城楼顶，外面下着大暴雨，BOOK 灯牌和远处的城市一起亮起来。",
+    ratio: "4 / 3",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/book-rooftop-rain.jpg"
+  },
+  {
+    id: "memory-holmes-phone-booth",
+    title: "福尔摩斯展的电话亭",
+    location: "湾区之眼书城",
+    date: "",
+    category: "date",
+    tags: ["福尔摩斯", "电话亭", "展览", "马车"],
+    note: "福尔摩斯展里被玫瑰围住的电话亭，后面还一起坐了马车。",
+    ratio: "3 / 4",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/holmes-phone-booth.jpg"
   }
 ];
 
