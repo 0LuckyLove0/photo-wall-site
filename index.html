@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="一个适合部署到 GitHub Pages 的响应式照片展示墙。"
+      content="一个适合 GitHub Pages 的情侣照片空间，支持浏览器本地上传和保存。"
     />
-    <title>照片展示墙</title>
+    <title>我们的照片空间</title>
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -16,32 +16,77 @@
       <div class="brand">
         <span class="brand-mark" aria-hidden="true"></span>
         <div>
-          <h1>照片墙</h1>
-          <p>按地点、人物和瞬间整理你的影像记录</p>
+          <h1>我们的照片空间</h1>
+          <p>旅行、约会、日常和只属于两个人的瞬间</p>
         </div>
       </div>
 
-      <div class="toolbar" aria-label="照片墙工具栏">
+      <div class="toolbar" aria-label="照片空间工具栏">
         <label class="search">
           <span class="visually-hidden">搜索照片</span>
-          <input id="searchInput" type="search" placeholder="搜索标题、地点或标签" />
+          <input id="searchInput" type="search" placeholder="搜索标题、地点、留言或标签" />
         </label>
-        <label class="upload-button">
-          <input id="photoUpload" type="file" accept="image/*" multiple />
-          <span>添加照片</span>
+        <button id="exportButton" class="ghost-button" type="button">导出备份</button>
+        <label class="ghost-button file-action">
+          <input id="importBackup" type="file" accept="application/json" />
+          <span>导入备份</span>
         </label>
       </div>
     </header>
 
     <main>
-      <section class="overview" aria-label="照片墙概览">
+      <section class="upload-panel" aria-label="上传情侣照片">
+        <form id="uploadForm" class="upload-form">
+          <label class="dropzone">
+            <input id="photoUpload" type="file" accept="image/*" multiple required />
+            <span>选择照片</span>
+            <strong id="selectedFileText">还没有选择照片</strong>
+          </label>
+
+          <div class="form-grid">
+            <label>
+              <span>标题</span>
+              <input id="photoTitle" type="text" placeholder="例如：第一次看海" />
+            </label>
+            <label>
+              <span>日期</span>
+              <input id="photoDate" type="date" />
+            </label>
+            <label>
+              <span>地点</span>
+              <input id="photoLocation" type="text" placeholder="例如：厦门" />
+            </label>
+            <label>
+              <span>分类</span>
+              <select id="photoCategory">
+                <option value="date">约会</option>
+                <option value="travel">旅行</option>
+                <option value="daily">日常</option>
+                <option value="anniversary">纪念日</option>
+                <option value="surprise">惊喜</option>
+              </select>
+            </label>
+            <label class="wide-field">
+              <span>留言</span>
+              <textarea id="photoNote" rows="3" placeholder="写一句当时想记住的话"></textarea>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button class="primary-button" type="submit">保存到照片空间</button>
+            <span id="storageStatus" class="storage-status" role="status"></span>
+          </div>
+        </form>
+      </section>
+
+      <section class="overview" aria-label="照片空间概览">
         <article class="stat">
           <strong id="totalCount">0</strong>
-          <span>张照片</span>
+          <span>张回忆</span>
         </article>
         <article class="stat">
-          <strong id="albumCount">0</strong>
-          <span>个分类</span>
+          <strong id="localCount">0</strong>
+          <span>本机上传</span>
         </article>
         <article class="stat">
           <strong id="yearRange">-</strong>
@@ -51,10 +96,11 @@
 
       <nav class="filters" aria-label="照片分类">
         <button class="filter is-active" type="button" data-filter="all">全部</button>
+        <button class="filter" type="button" data-filter="date">约会</button>
         <button class="filter" type="button" data-filter="travel">旅行</button>
-        <button class="filter" type="button" data-filter="city">城市</button>
-        <button class="filter" type="button" data-filter="people">人物</button>
-        <button class="filter" type="button" data-filter="nature">自然</button>
+        <button class="filter" type="button" data-filter="daily">日常</button>
+        <button class="filter" type="button" data-filter="anniversary">纪念日</button>
+        <button class="filter" type="button" data-filter="surprise">惊喜</button>
       </nav>
 
       <section id="gallery" class="gallery" aria-live="polite"></section>
@@ -66,7 +112,7 @@
 
     <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="照片预览">
       <button id="closeLightbox" class="icon-button close-button" type="button" aria-label="关闭预览">
-        ×
+        x
       </button>
       <button id="prevPhoto" class="icon-button nav-button nav-button-left" type="button" aria-label="上一张">
         ‹
@@ -74,8 +120,12 @@
       <figure class="lightbox-panel">
         <img id="lightboxImage" alt="" />
         <figcaption>
-          <strong id="lightboxTitle"></strong>
-          <span id="lightboxMeta"></span>
+          <div>
+            <strong id="lightboxTitle"></strong>
+            <span id="lightboxMeta"></span>
+            <p id="lightboxNote"></p>
+          </div>
+          <button id="deletePhoto" class="danger-button" type="button" hidden>删除本机照片</button>
         </figcaption>
       </figure>
       <button id="nextPhoto" class="icon-button nav-button nav-button-right" type="button" aria-label="下一张">
