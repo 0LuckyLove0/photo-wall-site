@@ -1,10 +1,3 @@
-const DB_NAME = "couple-photo-space";
-const DB_VERSION = 1;
-const STORE_NAME = "photos";
-const MAX_IMAGE_SIZE = 1800;
-const JPEG_QUALITY = 0.86;
-const MAX_VIDEO_SIZE_BYTES = 80 * 1024 * 1024;
-
 const categoryLabels = {
   all: "全部",
   date: "约会",
@@ -182,9 +175,7 @@ const samplePhotos = [
   }
 ];
 
-let dbPromise;
-let localPhotos = [];
-let photos = [...samplePhotos];
+const photos = [...samplePhotos];
 let visiblePhotos = [...photos];
 let activeFilter = "all";
 let activeIndex = 0;
@@ -194,19 +185,8 @@ const emptyState = document.querySelector("#emptyState");
 const searchInput = document.querySelector("#searchInput");
 const filterButtons = [...document.querySelectorAll(".filter")];
 const totalCount = document.querySelector("#totalCount");
-const localCount = document.querySelector("#localCount");
+const categoryCount = document.querySelector("#categoryCount");
 const yearRange = document.querySelector("#yearRange");
-const uploadForm = document.querySelector("#uploadForm");
-const photoUpload = document.querySelector("#photoUpload");
-const selectedFileText = document.querySelector("#selectedFileText");
-const photoTitle = document.querySelector("#photoTitle");
-const photoDate = document.querySelector("#photoDate");
-const photoLocation = document.querySelector("#photoLocation");
-const photoCategory = document.querySelector("#photoCategory");
-const photoNote = document.querySelector("#photoNote");
-const storageStatus = document.querySelector("#storageStatus");
-const exportButton = document.querySelector("#exportButton");
-const importBackup = document.querySelector("#importBackup");
 const lightbox = document.querySelector("#lightbox");
 const lightboxImage = document.querySelector("#lightboxImage");
 const lightboxVideo = document.querySelector("#lightboxVideo");
@@ -216,19 +196,9 @@ const lightboxNote = document.querySelector("#lightboxNote");
 const closeLightbox = document.querySelector("#closeLightbox");
 const prevPhoto = document.querySelector("#prevPhoto");
 const nextPhoto = document.querySelector("#nextPhoto");
-const deletePhoto = document.querySelector("#deletePhoto");
 
 function normalize(value) {
   return String(value ?? "").trim().toLowerCase();
-}
-
-function createId() {
-  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
-function basename(fileName) {
-  return fileName.replace(/\.[^.]+$/, "");
 }
 
 function formatDate(dateString) {
@@ -253,10 +223,6 @@ function getPhotoText(photo) {
       ...(photo.tags || [])
     ].join(" ")
   );
-}
-
-function setStatus(message) {
-  storageStatus.textContent = message;
 }
 
 function getMediaKind(photo) {
@@ -290,165 +256,14 @@ function getMediaMetaParts(photo) {
   ].filter(Boolean);
 }
 
-function readFileAsDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-}
-
-function openDb() {
-  if (!("indexedDB" in window)) {
-    return Promise.reject(new Error("当前浏览器不支持 IndexedDB"));
-  }
-
-  if (!dbPromise) {
-    dbPromise = new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-          db.createObjectStore(STORE_NAME, { keyPath: "id" });
-        }
-      };
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-  }
-
-  return dbPromise;
-}
-
-async function getAllLocalPhotos() {
-  const db = await openDb();
-  return new Promise((resolve, reject) => {
-    const request = db.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).getAll();
-    request.onsuccess = () => resolve(request.result || []);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-async function saveLocalPhoto(photo) {
-  const db = await openDb();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, "readwrite");
-    transaction.objectStore(STORE_NAME).put(photo);
-    transaction.oncomplete = () => resolve();
-    transaction.onerror = () => reject(transaction.error);
-  });
-}
-
-async function removeLocalPhoto(id) {
-  const db = await openDb();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, "readwrite");
-    transaction.objectStore(STORE_NAME).delete(id);
-    transaction.oncomplete = () => resolve();
-    transaction.onerror = () => reject(transaction.error);
-  });
-}
-
-function loadImageFromFile(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const image = new Image();
-    image.onload = () => {
-      URL.revokeObjectURL(url);
-      resolve(image);
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error(`无法读取图片：${file.name}`));
-    };
-    image.src = url;
-  });
-}
-
-async function compressImage(file) {
-  const image = await loadImageFromFile(file);
-  const scale = Math.min(1, MAX_IMAGE_SIZE / Math.max(image.naturalWidth, image.naturalHeight));
-  const width = Math.max(1, Math.round(image.naturalWidth * scale));
-  const height = Math.max(1, Math.round(image.naturalHeight * scale));
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
-
-  canvas.width = width;
-  canvas.height = height;
-  context.fillStyle = "#ffffff";
-  context.fillRect(0, 0, width, height);
-  context.drawImage(image, 0, 0, width, height);
-
-  return {
-    src: canvas.toDataURL("image/jpeg", JPEG_QUALITY),
-    ratio: `${width} / ${height}`
-  };
-}
-
-function loadVideoMetadata(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const video = document.createElement("video");
-    video.preload = "metadata";
-    video.muted = true;
-    video.playsInline = true;
-    video.onloadedmetadata = () => {
-      const width = video.videoWidth || 16;
-      const height = video.videoHeight || 9;
-      const duration = Number.isFinite(video.duration) ? video.duration : 0;
-      URL.revokeObjectURL(url);
-      resolve({ width, height, duration });
-    };
-    video.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error(`无法读取视频：${file.name}`));
-    };
-    video.src = url;
-  });
-}
-
-async function prepareMedia(file) {
-  if (file.type.startsWith("image/")) {
-    const image = await compressImage(file);
-    return {
-      kind: "image",
-      mime: "image/jpeg",
-      duration: 0,
-      ...image
-    };
-  }
-
-  if (file.type.startsWith("video/")) {
-    if (file.size > MAX_VIDEO_SIZE_BYTES) {
-      throw new Error(`视频过大：${file.name}`);
-    }
-
-    const metadata = await loadVideoMetadata(file);
-    return {
-      kind: "video",
-      mime: file.type || "video/mp4",
-      duration: metadata.duration,
-      ratio: `${metadata.width} / ${metadata.height}`,
-      src: await readFileAsDataUrl(file)
-    };
-  }
-
-  throw new Error(`不支持的文件类型：${file.name}`);
-}
-
-function rebuildPhotos() {
-  localPhotos.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-  photos = [...localPhotos, ...samplePhotos];
-}
-
 function updateStats() {
   const years = photos.map(getYear).filter(Boolean).sort((a, b) => a - b);
   const firstYear = years[0];
   const lastYear = years[years.length - 1];
+  const categories = new Set(photos.map((photo) => photo.category).filter(Boolean));
 
   totalCount.textContent = String(photos.length);
-  localCount.textContent = String(localPhotos.length);
+  categoryCount.textContent = String(categories.size);
   yearRange.textContent =
     firstYear && lastYear ? (firstYear === lastYear ? String(firstYear) : `${firstYear}-${lastYear}`) : "-";
 }
@@ -501,13 +316,6 @@ function createPhotoCard(photo, index) {
     button.append(videoBadge);
   }
 
-  if (photo.source === "local") {
-    const badge = document.createElement("span");
-    badge.className = "local-badge";
-    badge.textContent = "本机";
-    button.append(badge);
-  }
-
   button.addEventListener("click", () => openLightbox(index));
   return button;
 }
@@ -525,7 +333,6 @@ function renderGallery() {
 }
 
 function render() {
-  rebuildPhotos();
   updateStats();
   renderGallery();
 }
@@ -553,7 +360,6 @@ function openLightbox(index) {
   lightboxTitle.textContent = photo.title;
   lightboxMeta.textContent = getMediaMetaParts(photo).join(" · ");
   lightboxNote.textContent = photo.note || "";
-  deletePhoto.hidden = photo.source !== "local";
   lightbox.classList.add("is-open");
   lightbox.setAttribute("aria-hidden", "false");
   closeLightbox.focus();
@@ -575,150 +381,6 @@ function showPhoto(offset) {
   openLightbox(activeIndex);
 }
 
-function resetUploadForm() {
-  uploadForm.reset();
-  photoDate.value = new Date().toISOString().slice(0, 10);
-  selectedFileText.textContent = "还没有选择文件";
-}
-
-async function handleUpload(event) {
-  event.preventDefault();
-  const files = [...photoUpload.files].filter((file) => file.type.startsWith("image/") || file.type.startsWith("video/"));
-
-  if (files.length === 0) {
-    setStatus("请选择至少一张照片或一个短视频。");
-    return;
-  }
-
-  const submitButton = uploadForm.querySelector("button[type='submit']");
-  submitButton.disabled = true;
-  setStatus(`正在保存 ${files.length} 个文件...`);
-
-  try {
-    for (const [index, file] of files.entries()) {
-      const media = await prepareMedia(file);
-      const hasSharedTitle = files.length === 1 && normalize(photoTitle.value);
-      const photo = {
-        id: createId(),
-        title: hasSharedTitle ? photoTitle.value.trim() : basename(file.name),
-        location: photoLocation.value.trim() || "未记录地点",
-        date: photoDate.value || new Date().toISOString().slice(0, 10),
-        category: photoCategory.value,
-        tags: [
-          categoryLabels[photoCategory.value],
-          photoLocation.value.trim(),
-          media.kind === "video" ? "短视频" : "照片",
-          "本机上传"
-        ].filter(Boolean),
-        note: photoNote.value.trim(),
-        kind: media.kind,
-        mime: media.mime,
-        duration: media.duration,
-        ratio: media.ratio,
-        src: media.src,
-        source: "local",
-        createdAt: Date.now() + index
-      };
-
-      await saveLocalPhoto(photo);
-      localPhotos.unshift(photo);
-    }
-
-    resetUploadForm();
-    render();
-    setStatus(`已保存 ${files.length} 个回忆。`);
-  } catch (error) {
-    console.error(error);
-    setStatus(`保存失败。视频需小于 ${Math.round(MAX_VIDEO_SIZE_BYTES / 1024 / 1024)}MB，或浏览器存储空间不足。`);
-  } finally {
-    submitButton.disabled = false;
-  }
-}
-
-function exportBackup() {
-  if (localPhotos.length === 0) {
-    setStatus("还没有本机上传的内容可导出。");
-    return;
-  }
-
-  const payload = {
-    app: "couple-photo-space",
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    photos: localPhotos
-  };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = `couple-photo-space-${new Date().toISOString().slice(0, 10)}.json`;
-  anchor.click();
-  URL.revokeObjectURL(url);
-  setStatus(`已导出 ${localPhotos.length} 个本机回忆。`);
-}
-
-async function importPhotos(file) {
-  if (!file) return;
-
-  try {
-    const data = JSON.parse(await file.text());
-    const incoming = Array.isArray(data) ? data : data.photos;
-    if (!Array.isArray(incoming)) throw new Error("备份格式不正确");
-
-    const validPhotos = incoming
-      .filter((photo) => {
-        if (typeof photo?.src !== "string") return false;
-        return photo.src.startsWith("data:image/") || photo.src.startsWith("data:video/");
-      })
-      .map((photo) => ({
-        id: createId(),
-        title: String(photo.title || "导入的回忆"),
-        location: String(photo.location || "未记录地点"),
-        date: String(photo.date || new Date().toISOString().slice(0, 10)),
-        category: categoryLabels[photo.category] ? photo.category : "daily",
-        tags: Array.isArray(photo.tags) ? photo.tags.map(String) : ["导入"],
-        note: String(photo.note || ""),
-        ratio: String(photo.ratio || "4 / 5"),
-        kind: photo.kind === "video" || photo.src.startsWith("data:video/") ? "video" : "image",
-        mime: String(photo.mime || ""),
-        duration: Number(photo.duration || 0),
-        src: photo.src,
-        source: "local",
-        createdAt: Date.now()
-      }));
-
-    for (const photo of validPhotos) {
-      await saveLocalPhoto(photo);
-      localPhotos.unshift(photo);
-    }
-
-    importBackup.value = "";
-    render();
-    setStatus(`已导入 ${validPhotos.length} 个回忆。`);
-  } catch (error) {
-    console.error(error);
-    setStatus("导入失败，请确认文件是这个影像空间导出的 JSON 备份。");
-  }
-}
-
-async function deleteActivePhoto() {
-  const photo = visiblePhotos[activeIndex];
-  if (!photo || photo.source !== "local") return;
-  const ok = window.confirm(`删除「${photo.title}」？这个操作只会删除当前浏览器里的本机内容。`);
-  if (!ok) return;
-
-  try {
-    await removeLocalPhoto(photo.id);
-    localPhotos = localPhotos.filter((item) => item.id !== photo.id);
-    hideLightbox();
-    render();
-    setStatus("已删除本机内容。");
-  } catch (error) {
-    console.error(error);
-    setStatus("删除失败，请稍后再试。");
-  }
-}
-
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
     activeFilter = button.dataset.filter;
@@ -728,17 +390,9 @@ filterButtons.forEach((button) => {
 });
 
 searchInput.addEventListener("input", renderGallery);
-photoUpload.addEventListener("change", () => {
-  const count = photoUpload.files.length;
-  selectedFileText.textContent = count ? `已选择 ${count} 个文件` : "还没有选择文件";
-});
-uploadForm.addEventListener("submit", handleUpload);
-exportButton.addEventListener("click", exportBackup);
-importBackup.addEventListener("change", (event) => importPhotos(event.target.files[0]));
 closeLightbox.addEventListener("click", hideLightbox);
 prevPhoto.addEventListener("click", () => showPhoto(-1));
 nextPhoto.addEventListener("click", () => showPhoto(1));
-deletePhoto.addEventListener("click", deleteActivePhoto);
 
 lightbox.addEventListener("click", (event) => {
   if (event.target === lightbox) hideLightbox();
@@ -751,17 +405,7 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight") showPhoto(1);
 });
 
-async function init() {
-  photoDate.value = new Date().toISOString().slice(0, 10);
-
-  try {
-    localPhotos = await getAllLocalPhotos();
-    setStatus(localPhotos.length ? `已载入 ${localPhotos.length} 个本机回忆。` : "");
-  } catch (error) {
-    console.error(error);
-    setStatus("当前浏览器无法使用本机持久保存。");
-  }
-
+function init() {
   render();
 }
 
