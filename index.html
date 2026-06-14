@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="一个围绕两个人真实回忆的情侣影像空间，支持浏览器本地上传照片和短视频。"
+      content="一个围绕两个人真实回忆的情侣影像空间，用于展示照片和短视频。"
     />
     <title>我们的影像空间</title>
     <link rel="stylesheet" href="./styles.css" />
@@ -25,67 +25,18 @@
           <span class="visually-hidden">搜索影像</span>
           <input id="searchInput" type="search" placeholder="搜索照片、视频、地点、留言或标签" />
         </label>
-        <button id="exportButton" class="ghost-button" type="button">导出备份</button>
-        <label class="ghost-button file-action">
-          <input id="importBackup" type="file" accept="application/json" />
-          <span>导入备份</span>
-        </label>
       </div>
     </header>
 
     <main>
-      <section class="upload-panel" aria-label="上传情侣照片和短视频">
-        <form id="uploadForm" class="upload-form">
-          <label class="dropzone">
-            <input id="photoUpload" type="file" accept="image/*,video/*" multiple required />
-            <span>选择照片/视频</span>
-            <strong id="selectedFileText">还没有选择文件</strong>
-          </label>
-
-          <div class="form-grid">
-            <label>
-              <span>标题</span>
-              <input id="photoTitle" type="text" placeholder="例如：第一次看海" />
-            </label>
-            <label>
-              <span>日期</span>
-              <input id="photoDate" type="date" />
-            </label>
-            <label>
-              <span>地点</span>
-              <input id="photoLocation" type="text" placeholder="例如：厦门" />
-            </label>
-            <label>
-              <span>分类</span>
-              <select id="photoCategory">
-                <option value="date">约会</option>
-                <option value="travel">旅行</option>
-                <option value="daily">日常</option>
-                <option value="anniversary">纪念日</option>
-                <option value="surprise">惊喜</option>
-              </select>
-            </label>
-            <label class="wide-field">
-              <span>留言</span>
-              <textarea id="photoNote" rows="3" placeholder="写一句当时想记住的话"></textarea>
-            </label>
-          </div>
-
-          <div class="form-actions">
-            <button class="primary-button" type="submit">保存到影像空间</button>
-            <span id="storageStatus" class="storage-status" role="status"></span>
-          </div>
-        </form>
-      </section>
-
       <section class="overview" aria-label="影像空间概览">
         <article class="stat">
           <strong id="totalCount">0</strong>
           <span>个回忆</span>
         </article>
         <article class="stat">
-          <strong id="localCount">0</strong>
-          <span>本机上传</span>
+          <strong id="categoryCount">0</strong>
+          <span>个分类</span>
         </article>
         <article class="stat">
           <strong id="yearRange">-</strong>
@@ -125,7 +76,6 @@
             <span id="lightboxMeta"></span>
             <p id="lightboxNote"></p>
           </div>
-          <button id="deletePhoto" class="danger-button" type="button" hidden>删除本机内容</button>
         </figcaption>
       </figure>
       <button id="nextPhoto" class="icon-button nav-button nav-button-right" type="button" aria-label="下一张">
