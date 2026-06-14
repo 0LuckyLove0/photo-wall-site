@@ -380,7 +380,8 @@ main {
   text-align: left;
 }
 
-.photo-card img {
+.photo-card img,
+.photo-card video {
   display: block;
   width: 100%;
   height: auto;
@@ -398,7 +399,8 @@ main {
   pointer-events: none;
 }
 
-.photo-card:hover img {
+.photo-card:hover img,
+.photo-card:hover video {
   transform: scale(1.035);
 }
 
@@ -439,6 +441,19 @@ main {
   font-weight: 800;
 }
 
+.media-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(23, 36, 37, 0.78);
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
 .empty-state {
   margin: 32px auto 0;
   padding: 22px;
@@ -471,7 +486,8 @@ main {
   color: #fff;
 }
 
-.lightbox-panel img {
+.lightbox-panel img,
+.lightbox-panel video {
   display: block;
   width: 100%;
   max-height: 76vh;
