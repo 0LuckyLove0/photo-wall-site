@@ -144,6 +144,21 @@ const samplePhotos = [
     src: "./photos/mirror-car-show.jpg"
   },
   {
+    id: "memory-insta360-edited-selfie",
+    title: "影石店里的 P 图合照",
+    location: "Insta360 店铺",
+    date: "",
+    category: "date",
+    tags: ["Insta360", "影石", "防被骂神器", "P图", "合照", "逛店"],
+    note: "一起去逛 Insta360 的店铺，体验影石的防被骂神器时拍下的合照，这是她 P 图之后留下的版本。",
+    ratio: "3 / 4",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/insta360-edited-selfie.jpg"
+  },
+  {
     id: "memory-book-rooftop-rain",
     title: "暴雨里的 BOOK 灯牌",
     location: "湾区之眼书城楼顶",
