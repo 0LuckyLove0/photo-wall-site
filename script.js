@@ -172,6 +172,36 @@ const samplePhotos = [
     mime: "image/jpeg",
     duration: 0,
     src: "./photos/holmes-phone-booth.jpg"
+  },
+  {
+    id: "memory-zhongshan-park-cat",
+    title: "中山公园遇到的乖猫猫",
+    location: "中山公园",
+    date: "",
+    category: "date",
+    tags: ["中山公园", "约会", "猫猫", "很乖", "蹭蹭"],
+    note: "一起去中山公园约会时遇到的猫猫，很乖，一直在蹭我们两个。",
+    ratio: "3 / 4",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/zhongshan-park-cat.jpg"
+  },
+  {
+    id: "memory-west-bay-mangrove-sky",
+    title: "西湾红树林的海边天空",
+    location: "西湾红树林",
+    date: "",
+    category: "date",
+    tags: ["西湾红树林", "海边", "散步", "吹风", "天空", "红树林"],
+    note: "一起去西湾红树林，在海边散步吹风，看红树林时拍下的天空和海面灯光。",
+    ratio: "4 / 3",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/west-bay-mangrove-sky.jpg"
   }
 ];
 
