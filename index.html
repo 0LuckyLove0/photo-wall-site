@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="一个围绕两个人真实回忆的情侣影像空间，用于展示照片和短视频。"
+      content="一本围绕两个人真实回忆的情侣相册，用于展示照片和短视频。"
     />
-    <title>我们的影像空间</title>
+    <title>我们的情侣相册</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -15,43 +15,61 @@
       <div class="brand">
         <span class="brand-mark" aria-hidden="true"></span>
         <div>
-          <h1>我们的影像空间</h1>
-          <p>名字、自拍、晚餐、书城、公园、海边、影石和调香体验里的两个人</p>
+          <h1>我们的情侣相册</h1>
+          <p>写给两个人的照片和几秒钟短视频</p>
         </div>
       </div>
 
-      <div class="toolbar" aria-label="影像空间工具栏">
+      <div class="toolbar" aria-label="相册工具栏">
         <label class="search">
           <span class="visually-hidden">搜索影像</span>
-          <input id="searchInput" type="search" placeholder="搜索照片、视频、地点、留言或标签" />
+          <input id="searchInput" type="search" placeholder="找一段回忆、一个地点或一句话" />
         </label>
       </div>
     </header>
 
     <main>
-      <section class="overview" aria-label="影像空间概览">
+      <section class="album-hero" aria-label="情侣相册封面">
+        <div class="album-hero-copy">
+          <p>Our Little Album</p>
+          <h2>把两个人走过的地方，装成一本相册</h2>
+          <span>
+            从写满名字的一页，到小龙虾店里的合照、暴雨楼顶的 BOOK、海边的天空，还有一起看展和调香的下午。
+          </span>
+        </div>
+        <div class="album-hero-caption" aria-label="封面注记">
+          <strong>封面记忆</strong>
+          <span>一起吃小龙虾那天，镜头里先留下两个人。</span>
+        </div>
+      </section>
+
+      <section class="overview" aria-label="相册概览">
         <article class="stat">
           <strong id="totalCount">0</strong>
-          <span>个回忆</span>
+          <span>页回忆</span>
         </article>
         <article class="stat">
           <strong id="categoryCount">0</strong>
-          <span>个分类</span>
+          <span>个章节</span>
         </article>
         <article class="stat">
           <strong id="yearRange">-</strong>
-          <span>时间跨度</span>
+          <span>相册主角</span>
         </article>
       </section>
 
       <nav class="filters" aria-label="影像分类">
         <button class="filter is-active" type="button" data-filter="all">全部</button>
-        <button class="filter" type="button" data-filter="date">约会</button>
-        <button class="filter" type="button" data-filter="travel">旅行</button>
-        <button class="filter" type="button" data-filter="daily">日常</button>
-        <button class="filter" type="button" data-filter="anniversary">纪念日</button>
-        <button class="filter" type="button" data-filter="surprise">惊喜</button>
+        <button class="filter" type="button" data-filter="date">约会章节</button>
+        <button class="filter" type="button" data-filter="travel">一起看展</button>
+        <button class="filter" type="button" data-filter="daily">日常小事</button>
+        <button class="filter" type="button" data-filter="anniversary">纪念盖章</button>
+        <button class="filter" type="button" data-filter="surprise">特别心意</button>
       </nav>
+
+      <section class="album-note" aria-label="相册引言">
+        <p>这些不是按地点堆起来的照片，而是一页页两个人一起经过的瞬间。</p>
+      </section>
 
       <section id="gallery" class="gallery" aria-live="polite"></section>
 
