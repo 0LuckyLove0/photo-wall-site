@@ -1,10 +1,10 @@
 const categoryLabels = {
   all: "全部",
-  date: "约会",
-  travel: "旅行",
-  daily: "日常",
-  anniversary: "纪念日",
-  surprise: "惊喜"
+  date: "约会章节",
+  travel: "一起看展",
+  daily: "日常小事",
+  anniversary: "纪念盖章",
+  surprise: "特别心意"
 };
 
 const samplePhotos = [
@@ -310,7 +310,7 @@ function updateStats() {
   totalCount.textContent = String(photos.length);
   categoryCount.textContent = String(categories.size);
   yearRange.textContent =
-    firstYear && lastYear ? (firstYear === lastYear ? String(firstYear) : `${firstYear}-${lastYear}`) : "-";
+    firstYear && lastYear ? (firstYear === lastYear ? String(firstYear) : `${firstYear}-${lastYear}`) : "两个人";
 }
 
 function createMediaElement(photo, preview = true) {
@@ -332,25 +332,30 @@ function createMediaElement(photo, preview = true) {
   return image;
 }
 
-function createPhotoCard(photo, index) {
+function createPhotoCard(photo, visibleIndex, pageIndex) {
   const button = document.createElement("button");
   const media = createMediaElement(photo);
   const info = document.createElement("span");
+  const page = document.createElement("span");
   const title = document.createElement("strong");
   const meta = document.createElement("span");
   const note = document.createElement("em");
   const kind = getMediaKind(photo);
+  const tilt = ((pageIndex % 5) - 2) * 0.36;
 
   button.className = "photo-card";
   button.type = "button";
   button.style.setProperty("--ratio", photo.ratio || "4 / 5");
+  button.style.setProperty("--tilt", `${tilt}deg`);
   button.setAttribute("aria-label", `打开${getMediaTypeLabel(photo)}：${photo.title}`);
 
   info.className = "photo-info";
+  page.className = "page-label";
+  page.textContent = `第 ${String(pageIndex + 1).padStart(2, "0")} 页`;
   title.textContent = photo.title;
   meta.textContent = getMediaMetaParts(photo).join(" · ");
   note.textContent = photo.note || "";
-  info.append(title, meta);
+  info.append(page, title, meta);
   if (photo.note) info.append(note);
   button.append(media, info);
 
@@ -361,7 +366,7 @@ function createPhotoCard(photo, index) {
     button.append(videoBadge);
   }
 
-  button.addEventListener("click", () => openLightbox(index));
+  button.addEventListener("click", () => openLightbox(visibleIndex));
   return button;
 }
 
@@ -373,7 +378,9 @@ function renderGallery() {
     return categoryMatch && textMatch;
   });
 
-  gallery.replaceChildren(...visiblePhotos.map(createPhotoCard));
+  gallery.replaceChildren(
+    ...visiblePhotos.map((photo, visibleIndex) => createPhotoCard(photo, visibleIndex, photos.indexOf(photo)))
+  );
   emptyState.hidden = visiblePhotos.length > 0;
 }
 
