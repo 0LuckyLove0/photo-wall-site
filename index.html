@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="一个适合 GitHub Pages 的情侣照片空间，支持浏览器本地上传和保存。"
+      content="一个适合 GitHub Pages 的情侣影像空间，支持浏览器本地上传照片和短视频。"
     />
-    <title>我们的照片空间</title>
+    <title>我们的影像空间</title>
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -16,15 +16,15 @@
       <div class="brand">
         <span class="brand-mark" aria-hidden="true"></span>
         <div>
-          <h1>我们的照片空间</h1>
-          <p>旅行、约会、日常和只属于两个人的瞬间</p>
+          <h1>我们的影像空间</h1>
+          <p>照片、短视频和只属于两个人的瞬间</p>
         </div>
       </div>
 
-      <div class="toolbar" aria-label="照片空间工具栏">
+      <div class="toolbar" aria-label="影像空间工具栏">
         <label class="search">
-          <span class="visually-hidden">搜索照片</span>
-          <input id="searchInput" type="search" placeholder="搜索标题、地点、留言或标签" />
+          <span class="visually-hidden">搜索影像</span>
+          <input id="searchInput" type="search" placeholder="搜索照片、视频、地点、留言或标签" />
         </label>
         <button id="exportButton" class="ghost-button" type="button">导出备份</button>
         <label class="ghost-button file-action">
@@ -35,12 +35,12 @@
     </header>
 
     <main>
-      <section class="upload-panel" aria-label="上传情侣照片">
+      <section class="upload-panel" aria-label="上传情侣照片和短视频">
         <form id="uploadForm" class="upload-form">
           <label class="dropzone">
-            <input id="photoUpload" type="file" accept="image/*" multiple required />
-            <span>选择照片</span>
-            <strong id="selectedFileText">还没有选择照片</strong>
+            <input id="photoUpload" type="file" accept="image/*,video/*" multiple required />
+            <span>选择照片/视频</span>
+            <strong id="selectedFileText">还没有选择文件</strong>
           </label>
 
           <div class="form-grid">
@@ -73,16 +73,16 @@
           </div>
 
           <div class="form-actions">
-            <button class="primary-button" type="submit">保存到照片空间</button>
+            <button class="primary-button" type="submit">保存到影像空间</button>
             <span id="storageStatus" class="storage-status" role="status"></span>
           </div>
         </form>
       </section>
 
-      <section class="overview" aria-label="照片空间概览">
+      <section class="overview" aria-label="影像空间概览">
         <article class="stat">
           <strong id="totalCount">0</strong>
-          <span>张回忆</span>
+          <span>个回忆</span>
         </article>
         <article class="stat">
           <strong id="localCount">0</strong>
@@ -94,7 +94,7 @@
         </article>
       </section>
 
-      <nav class="filters" aria-label="照片分类">
+      <nav class="filters" aria-label="影像分类">
         <button class="filter is-active" type="button" data-filter="all">全部</button>
         <button class="filter" type="button" data-filter="date">约会</button>
         <button class="filter" type="button" data-filter="travel">旅行</button>
@@ -106,11 +106,11 @@
       <section id="gallery" class="gallery" aria-live="polite"></section>
 
       <p id="emptyState" class="empty-state" hidden>
-        没有匹配的照片。可以换个关键词，或切回全部分类。
+        没有匹配的内容。可以换个关键词，或切回全部分类。
       </p>
     </main>
 
-    <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="照片预览">
+    <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="影像预览">
       <button id="closeLightbox" class="icon-button close-button" type="button" aria-label="关闭预览">
         x
       </button>
@@ -119,13 +119,14 @@
       </button>
       <figure class="lightbox-panel">
         <img id="lightboxImage" alt="" />
+        <video id="lightboxVideo" controls playsinline hidden></video>
         <figcaption>
           <div>
             <strong id="lightboxTitle"></strong>
             <span id="lightboxMeta"></span>
             <p id="lightboxNote"></p>
           </div>
-          <button id="deletePhoto" class="danger-button" type="button" hidden>删除本机照片</button>
+          <button id="deletePhoto" class="danger-button" type="button" hidden>删除本机内容</button>
         </figcaption>
       </figure>
       <button id="nextPhoto" class="icon-button nav-button nav-button-right" type="button" aria-label="下一张">
