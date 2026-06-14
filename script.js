@@ -16,100 +16,139 @@ const categoryLabels = {
 
 const samplePhotos = [
   {
-    id: "sample-seaside-date",
-    title: "海边的风",
-    location: "厦门",
-    date: "2025-05-20",
-    category: "date",
-    tags: ["约会", "海边", "日落"],
-    note: "那天没有特别安排，但散步很久。",
-    ratio: "4 / 5",
-    source: "sample",
-    src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1100&q=84"
-  },
-  {
-    id: "sample-window-light",
-    title: "窗边的光",
-    location: "家",
-    date: "2026-02-14",
-    category: "daily",
-    tags: ["日常", "光影", "安静"],
-    note: "普通的一天，也值得被留下。",
-    ratio: "4 / 5",
-    source: "sample",
-    src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=84"
-  },
-  {
-    id: "sample-mountain-trip",
-    title: "山谷远行",
-    location: "川西",
-    date: "2025-10-04",
-    category: "travel",
-    tags: ["旅行", "山", "云"],
-    note: "路很远，但看到风景的那一刻就值了。",
-    ratio: "4 / 3",
-    source: "sample",
-    src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=84"
-  },
-  {
-    id: "sample-coffee-afternoon",
-    title: "午后咖啡",
-    location: "成都",
-    date: "2026-01-08",
-    category: "daily",
-    tags: ["咖啡", "日常", "聊天"],
-    note: "坐在角落里，把最近的小事都说完。",
-    ratio: "1 / 1",
-    source: "sample",
-    src: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=84"
-  },
-  {
-    id: "sample-city-rain",
-    title: "雨后街灯",
-    location: "上海",
-    date: "2024-12-31",
-    category: "anniversary",
-    tags: ["纪念日", "夜景", "城市"],
-    note: "跨年的路上，灯光和雨水都很亮。",
-    ratio: "5 / 4",
-    source: "sample",
-    src: "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1100&q=84"
-  },
-  {
-    id: "sample-forest-walk",
-    title: "森林散步",
-    location: "杭州",
-    date: "2024-04-12",
-    category: "date",
-    tags: ["约会", "森林", "散步"],
-    note: "没有目的地，只是一起慢慢走。",
-    ratio: "3 / 4",
-    source: "sample",
-    src: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1000&q=84"
-  },
-  {
-    id: "sample-cheers",
-    title: "庆祝一下",
-    location: "深圳",
-    date: "2026-03-02",
+    id: "memory-name-practice",
+    title: "写满名字的一页",
+    location: "手写纸页",
+    date: "",
     category: "surprise",
-    tags: ["惊喜", "庆祝", "晚餐"],
-    note: "理由不重要，重要的是我们都在。",
-    ratio: "4 / 3",
-    source: "sample",
-    src: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1200&q=84"
+    tags: ["赵霞", "手写", "名字", "认真"],
+    note: "把一个名字一遍遍写满整页，像是在认真留下喜欢的痕迹。",
+    ratio: "3 / 4",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/name-practice.jpg"
   },
   {
-    id: "sample-rooftop-sunset",
-    title: "屋顶落日",
-    location: "北京",
-    date: "2025-08-17",
+    id: "memory-rice-noodle-selfie",
+    title: "米粉店里的第一张合照",
+    location: "米粉店",
+    date: "",
+    category: "date",
+    tags: ["约会", "自拍", "米粉", "笑脸"],
+    note: "吃饭前先把两个人装进镜头里，背景热闹，表情很近。",
+    ratio: "1900 / 1424",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/rice-noodle-selfie.jpg"
+  },
+  {
+    id: "memory-peace-selfie",
+    title: "她比了个耶",
+    location: "米粉店",
+    date: "",
+    category: "date",
+    tags: ["约会", "自拍", "比耶", "餐厅"],
+    note: "同一个座位上的另一张照片，一个比耶，一个靠近镜头。",
+    ratio: "1900 / 1424",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/peace-selfie.jpg"
+  },
+  {
+    id: "memory-crayfish-dinner",
+    title: "一桌小龙虾晚餐",
+    location: "餐桌",
+    date: "",
+    category: "date",
+    tags: ["晚餐", "小龙虾", "汽水", "约会"],
+    note: "辣味小龙虾、烤翅、凉菜和汽水，是一顿很实在的开心。",
+    ratio: "4 / 3",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/crayfish-dinner.jpg"
+  },
+  {
+    id: "memory-ocean-art-museum",
+    title: "大洋洲艺术展入口",
+    location: "博物馆",
+    date: "",
     category: "travel",
-    tags: ["旅行", "落日", "屋顶"],
-    note: "一起等天色慢慢暗下来。",
-    ratio: "5 / 4",
-    source: "sample",
-    src: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1100&q=84"
+    tags: ["展览", "博物馆", "大洋洲", "旅行"],
+    note: "蓝色展墙和木船把那次看展的第一眼留了下来。",
+    ratio: "4 / 3",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/ocean-art-museum.jpg"
+  },
+  {
+    id: "memory-wooden-statues",
+    title: "展厅里的木雕",
+    location: "博物馆",
+    date: "",
+    category: "travel",
+    tags: ["展览", "木雕", "博物馆", "安静"],
+    note: "灯光照在木雕和影子上，是看展途中停下来的一刻。",
+    ratio: "3 / 4",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/wooden-statues.jpg"
+  },
+  {
+    id: "memory-perfume-lab",
+    title: "一起调香",
+    location: "调香体验馆",
+    date: "",
+    category: "surprise",
+    tags: ["调香", "体验", "香水", "手作"],
+    note: "滴管、琥珀色瓶子和配方卡，记录了一次一起动手做香水的体验。",
+    ratio: "4 / 3",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/perfume-lab.jpg"
+  },
+  {
+    id: "memory-perfumer-certificate",
+    title: "初级调香师证书",
+    location: "调香体验馆",
+    date: "",
+    category: "anniversary",
+    tags: ["证书", "调香", "纪念", "完成"],
+    note: "体验结束后留下的证书，比照片更像一次正式盖章的纪念。",
+    ratio: "4 / 3",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/perfumer-certificate.jpg"
+  },
+  {
+    id: "memory-mirror-car-show",
+    title: "车展哈哈镜自拍",
+    location: "车展展厅",
+    date: "",
+    category: "daily",
+    tags: ["车展", "哈哈镜", "自拍", "好玩"],
+    note: "镜面把表情拉成了夸张的样子，这种不好好拍照的瞬间反而最鲜活。",
+    ratio: "3 / 4",
+    source: "curated",
+    kind: "image",
+    mime: "image/jpeg",
+    duration: 0,
+    src: "./photos/mirror-car-show.jpg"
   }
 ];
 
@@ -207,6 +246,18 @@ function formatDuration(seconds) {
   const minutes = Math.floor(rounded / 60);
   const rest = String(rounded % 60).padStart(2, "0");
   return `${minutes}:${rest}`;
+}
+
+function getMediaMetaParts(photo) {
+  const kind = getMediaKind(photo);
+  const duration = kind === "video" ? formatDuration(photo.duration) : "";
+  return [
+    getMediaTypeLabel(photo),
+    categoryLabels[photo.category] || "回忆",
+    photo.location || "未记录地点",
+    photo.date ? formatDate(photo.date) : "",
+    duration
+  ].filter(Boolean);
 }
 
 function readFileAsDataUrl(file) {
@@ -407,7 +458,7 @@ function createPhotoCard(photo, index) {
 
   info.className = "photo-info";
   title.textContent = photo.title;
-  meta.textContent = `${getMediaTypeLabel(photo)} · ${categoryLabels[photo.category] || "回忆"} · ${photo.location || "未记录地点"} · ${formatDate(photo.date)}`;
+  meta.textContent = getMediaMetaParts(photo).join(" · ");
   note.textContent = photo.note || "";
   info.append(title, meta);
   if (photo.note) info.append(note);
@@ -470,13 +521,7 @@ function openLightbox(index) {
   }
 
   lightboxTitle.textContent = photo.title;
-  lightboxMeta.textContent = [
-    getMediaTypeLabel(photo),
-    categoryLabels[photo.category] || "回忆",
-    photo.location || "未记录地点",
-    formatDate(photo.date),
-    kind === "video" ? formatDuration(photo.duration) : ""
-  ].filter(Boolean).join(" · ");
+  lightboxMeta.textContent = getMediaMetaParts(photo).join(" · ");
   lightboxNote.textContent = photo.note || "";
   deletePhoto.hidden = photo.source !== "local";
   lightbox.classList.add("is-open");
