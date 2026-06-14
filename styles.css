@@ -333,8 +333,7 @@ main {
     transform 220ms ease;
 }
 
-.photo-card img,
-.photo-card video {
+.photo-card img {
   display: block;
   width: 100%;
   height: auto;
@@ -345,8 +344,7 @@ main {
   transition: transform 260ms ease;
 }
 
-.photo-card:hover img,
-.photo-card:hover video {
+.photo-card:hover img {
   transform: scale(1.025);
 }
 
@@ -393,19 +391,6 @@ main {
   text-transform: uppercase;
 }
 
-.media-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1;
-  padding: 5px 8px;
-  border-radius: 999px;
-  background: rgba(36, 31, 29, 0.78);
-  color: #fff;
-  font-size: 0.76rem;
-  font-weight: 800;
-}
-
 .empty-state {
   margin: 32px auto 0;
   padding: 22px;
@@ -438,8 +423,7 @@ main {
   color: #fff;
 }
 
-.lightbox-panel img,
-.lightbox-panel video {
+.lightbox-panel img {
   display: block;
   width: 100%;
   max-height: 76vh;
