@@ -12,7 +12,11 @@ const gateProgress = document.querySelector("#gateProgress");
 const unlockName = "赵霞";
 const mobileImageQuery = window.matchMedia("(max-width: 640px)");
 let gateState = "idle";
+let nameVerified = false;
+let nameHasError = false;
 let loadedImageCount = 0;
+let totalImageCount = 0;
+let preloadPromise;
 
 function updateScrollProgress() {
   const scrollable = document.documentElement.scrollHeight - window.innerHeight;
@@ -59,6 +63,51 @@ function setGateProgress(loaded, total) {
   return percent;
 }
 
+function currentLoadPercent() {
+  return totalImageCount > 0 ? Math.round((loadedImageCount / totalImageCount) * 100) : 100;
+}
+
+function updateGateState() {
+  if (gateState === "entered") return;
+
+  if (nameHasError) {
+    gateStatus.classList.add("is-error");
+    gateStatus.textContent = "名字不对，这一页只给赵霞看。";
+    gateButton.disabled = false;
+    gateButton.textContent = "重新输入";
+    return;
+  }
+
+  gateStatus.classList.remove("is-error");
+
+  if (gateState === "ready" && nameVerified) {
+    gateStatus.textContent = "照片准备好了，现在可以进入。";
+    gateButton.disabled = false;
+    gateButton.textContent = "进入拾光集";
+    nameInput.disabled = true;
+    return;
+  }
+
+  if (gateState === "ready") {
+    gateStatus.textContent = "照片已经准备好了，输入名字就能进入。";
+    gateButton.disabled = false;
+    gateButton.textContent = "解锁";
+    return;
+  }
+
+  if (nameVerified) {
+    gateStatus.textContent = `名字正确，照片还在准备 ${loadedImageCount}/${totalImageCount}，${currentLoadPercent()}%`;
+    gateButton.disabled = true;
+    gateButton.textContent = "照片准备中...";
+    nameInput.disabled = true;
+    return;
+  }
+
+  gateStatus.textContent = `正在准备照片 ${loadedImageCount}/${totalImageCount}，${currentLoadPercent()}%。你可以先输入名字。`;
+  gateButton.disabled = false;
+  gateButton.textContent = "解锁";
+}
+
 function preloadImage(src) {
   return new Promise((resolve) => {
     const image = new Image();
@@ -69,29 +118,29 @@ function preloadImage(src) {
 }
 
 async function preloadAllImages() {
+  if (preloadPromise) return preloadPromise;
+
   gateState = "loading";
   const sources = getImageSources();
+  totalImageCount = sources.length;
   loadedImageCount = 0;
-  gateStatus.classList.remove("is-error");
-  gateStatus.textContent = `正在准备照片 0/${sources.length}`;
-  gateButton.disabled = true;
-  gateButton.textContent = "准备中...";
   setGateProgress(0, sources.length);
+  updateGateState();
 
-  await Promise.all(
+  preloadPromise = Promise.all(
     sources.map(async (src) => {
       await preloadImage(src);
       loadedImageCount += 1;
-      const percent = setGateProgress(loadedImageCount, sources.length);
-      gateStatus.textContent = `正在准备照片 ${loadedImageCount}/${sources.length}，${percent}%`;
+      setGateProgress(loadedImageCount, sources.length);
+      updateGateState();
     })
-  );
+  ).then(() => {
+    gateState = "ready";
+    setGateProgress(sources.length, sources.length);
+    updateGateState();
+  });
 
-  gateState = "ready";
-  gateStatus.textContent = "照片准备好了，现在可以进入。";
-  gateButton.disabled = false;
-  gateButton.textContent = "进入拾光集";
-  nameInput.disabled = true;
+  return preloadPromise;
 }
 
 function enterPage() {
@@ -107,21 +156,21 @@ function handleGateSubmit(event) {
   event.preventDefault();
   const typedName = nameInput.value.trim();
 
-  if (gateState === "ready") {
+  if (nameVerified && gateState === "ready") {
     enterPage();
     return;
   }
 
-  if (gateState === "loading") return;
-
   if (typedName !== unlockName) {
-    gateStatus.classList.add("is-error");
-    gateStatus.textContent = "名字不对，这一页只给赵霞看。";
+    nameHasError = true;
+    updateGateState();
     nameInput.select();
     return;
   }
 
-  preloadAllImages();
+  nameVerified = true;
+  nameHasError = false;
+  updateGateState();
 }
 
 function makePetal(x, y, offset) {
@@ -160,8 +209,14 @@ function init() {
   updateScrollProgress();
   nameInput.focus();
   gateForm.addEventListener("submit", handleGateSubmit);
+  nameInput.addEventListener("input", () => {
+    if (!nameHasError) return;
+    nameHasError = false;
+    updateGateState();
+  });
   window.addEventListener("scroll", updateScrollProgress, { passive: true });
   answerButtons.forEach((button) => button.addEventListener("click", handleAnswer));
+  preloadAllImages();
 }
 
 init();
