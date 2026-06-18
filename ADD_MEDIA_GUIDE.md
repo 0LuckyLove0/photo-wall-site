@@ -8,8 +8,23 @@
 
 - `index.html`：每一屏的照片、文案和表白按钮。
 - `styles.css`：沉浸式滚动、照片排版和表白氛围。
-- `script.js`：滚动进度、入场动画和按钮反馈。
-- `photos/`：页面使用的照片。
+- `script.js`：开屏验证、照片预加载、滚动进度、入场动画和按钮反馈。
+- `photos/`：桌面端和兜底使用的照片。
+- `photos/mobile/`：手机端优先加载的轻量照片。
+
+## 开屏验证和加载
+
+页面打开后会先显示验证层。只有输入 `赵霞` 才会开始加载照片。
+
+相关代码在 `script.js`：
+
+```js
+const unlockName = "赵霞";
+```
+
+如果以后要改验证名字，只改这里即可。
+
+验证通过后，脚本会读取页面里的所有 `<img>`，逐张预加载，并更新开屏进度条。手机屏幕会优先预加载 `data-mobile-src` 指向的小图，加载完成后，按钮会变成“进入拾光集”，这时才会解锁正文。
 
 ## 改一句文案
 
@@ -17,7 +32,15 @@
 
 ```html
 <section class="scene memory" aria-label="西湾红树林">
-  <img src="./photos/west-bay-mangrove-sky.jpg" alt="西湾红树林海边天空" loading="lazy" decoding="async" />
+  <img
+    src="./photos/west-bay-mangrove-sky.jpg"
+    srcset="./photos/mobile/west-bay-mangrove-sky.jpg 1200w, ./photos/west-bay-mangrove-sky.jpg 2200w"
+    sizes="100vw"
+    data-mobile-src="./photos/mobile/west-bay-mangrove-sky.jpg"
+    alt="西湾红树林海边天空"
+    loading="lazy"
+    decoding="async"
+  />
   <div class="shade"></div>
   <div class="copy">
     <p class="kicker">海边的风</p>
@@ -35,7 +58,7 @@
 
 ## 替换照片
 
-把新照片放进 `photos/`，文件名使用小写英文、数字和连字符。
+把新照片放进 `photos/`，再生成一张手机小图放进 `photos/mobile/`。文件名使用小写英文、数字和连字符，两边保持同名。
 
 推荐：
 
@@ -54,7 +77,15 @@ IMG_1234 原图.jpg
 然后在 `index.html` 里改对应的 `src`：
 
 ```html
-<img src="./photos/example-memory.jpg" alt="照片描述" loading="lazy" decoding="async" />
+<img
+  src="./photos/example-memory.jpg"
+  srcset="./photos/mobile/example-memory.jpg 1200w, ./photos/example-memory.jpg 2200w"
+  sizes="100vw"
+  data-mobile-src="./photos/mobile/example-memory.jpg"
+  alt="照片描述"
+  loading="lazy"
+  decoding="async"
+/>
 ```
 
 ## 压缩照片
@@ -65,16 +96,23 @@ IMG_1234 原图.jpg
 sips -Z 2000 -s format jpeg -s formatOptions 78 /path/to/original.png --out photos/example-memory.jpg
 ```
 
+再生成手机小图：
+
+```bash
+sips -Z 1200 -s format jpeg -s formatOptions 70 photos/example-memory.jpg --out photos/mobile/example-memory.jpg
+```
+
 查看尺寸：
 
 ```bash
-sips -g pixelWidth -g pixelHeight photos/example-memory.jpg
+sips -g pixelWidth -g pixelHeight photos/example-memory.jpg photos/mobile/example-memory.jpg
 ```
 
 建议：
 
 - 长边控制在 `1600` 到 `2200` 像素。
 - 单张尽量控制在 `400KB` 到 `800KB`。
+- 手机小图长边控制在 `1200` 像素左右，单张尽量控制在 `150KB` 到 `300KB`。
 - 首屏封面图尽量更小，因为它会优先加载。
 
 ## 增加一屏
@@ -85,7 +123,15 @@ sips -g pixelWidth -g pixelHeight photos/example-memory.jpg
 
 ```html
 <section class="scene memory" aria-label="这一屏的名字">
-  <img src="./photos/example-memory.jpg" alt="照片描述" loading="lazy" decoding="async" />
+  <img
+    src="./photos/example-memory.jpg"
+    srcset="./photos/mobile/example-memory.jpg 1200w, ./photos/example-memory.jpg 2200w"
+    sizes="100vw"
+    data-mobile-src="./photos/mobile/example-memory.jpg"
+    alt="照片描述"
+    loading="lazy"
+    decoding="async"
+  />
   <div class="shade"></div>
   <div class="copy">
     <p class="kicker">小标题</p>
@@ -100,8 +146,24 @@ sips -g pixelWidth -g pixelHeight photos/example-memory.jpg
 ```html
 <section class="scene split" aria-label="这一屏的名字">
   <div class="photo-pair">
-    <img src="./photos/first.jpg" alt="第一张照片描述" loading="lazy" decoding="async" />
-    <img src="./photos/second.jpg" alt="第二张照片描述" loading="lazy" decoding="async" />
+    <img
+      src="./photos/first.jpg"
+      srcset="./photos/mobile/first.jpg 1200w, ./photos/first.jpg 2200w"
+      sizes="(max-width: 420px) calc(100vw - 32px), 50vw"
+      data-mobile-src="./photos/mobile/first.jpg"
+      alt="第一张照片描述"
+      loading="lazy"
+      decoding="async"
+    />
+    <img
+      src="./photos/second.jpg"
+      srcset="./photos/mobile/second.jpg 1200w, ./photos/second.jpg 2200w"
+      sizes="(max-width: 420px) calc(100vw - 32px), 44vw"
+      data-mobile-src="./photos/mobile/second.jpg"
+      alt="第二张照片描述"
+      loading="lazy"
+      decoding="async"
+    />
   </div>
   <div class="split-copy">
     <p class="kicker">小标题</p>
@@ -133,6 +195,10 @@ http://127.0.0.1:4173
 
 检查内容：
 
+- 输入错误名字时是否不能进入。
+- 输入 `赵霞` 后是否开始加载照片。
+- 加载进度到 100% 后是否能进入正文。
+- 手机上加载时是否优先请求 `photos/mobile/` 里的图片。
 - 手机上第一屏是否像表白开场，而不是照片列表。
 - 每一屏文字是否没有溢出。
 - 照片是否加载。

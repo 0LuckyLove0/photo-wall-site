@@ -1,13 +1,40 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="is-locked">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="拾光集，一页写给赵霞的表白网页。" />
     <title>拾光集</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body class="is-locked">
+    <section id="entryGate" class="entry-gate" aria-label="开屏验证">
+      <div class="gate-backdrop" aria-hidden="true"></div>
+      <form class="gate-card" id="gateForm">
+        <p class="kicker">只给一个人看的拾光集</p>
+        <h2>先输入你的名字。</h2>
+        <p class="gate-copy">
+          里面的每一页都和你有关。输入正确后，我会先把照片都准备好，再带你进去慢慢看。
+        </p>
+        <label class="gate-label" for="nameInput">名字</label>
+        <input
+          id="nameInput"
+          class="gate-input"
+          type="text"
+          autocomplete="off"
+          inputmode="text"
+          placeholder="请输入名字"
+          aria-describedby="gateStatus"
+        />
+        <div class="gate-progress" aria-label="照片加载进度">
+          <span id="gateProgress"></span>
+        </div>
+        <p id="gateStatus" class="gate-status" aria-live="polite">输入名字后开始准备照片。</p>
+        <button id="gateButton" class="gate-button" type="submit">解锁</button>
+      </form>
+    </section>
+
     <div class="scroll-progress" aria-hidden="true">
       <span id="scrollProgress"></span>
     </div>
@@ -16,6 +43,9 @@
       <section class="scene cover" aria-label="开场">
         <img
           src="./photos/rice-noodle-selfie.jpg"
+          srcset="./photos/mobile/rice-noodle-selfie.jpg 1200w, ./photos/rice-noodle-selfie.jpg 1900w"
+          sizes="100vw"
+          data-mobile-src="./photos/mobile/rice-noodle-selfie.jpg"
           alt="小龙虾店里的合照"
           fetchpriority="high"
         />
@@ -43,7 +73,15 @@
       </section>
 
       <section class="scene memory" aria-label="写满名字的一页">
-        <img src="./photos/name-practice.jpg" alt="写满名字的一页" loading="lazy" decoding="async" />
+        <img
+          src="./photos/name-practice.jpg"
+          srcset="./photos/mobile/name-practice.jpg 900w, ./photos/name-practice.jpg 1350w"
+          sizes="100vw"
+          data-mobile-src="./photos/mobile/name-practice.jpg"
+          alt="写满名字的一页"
+          loading="lazy"
+          decoding="async"
+        />
         <div class="shade"></div>
         <div class="copy">
           <p class="kicker">写下你的名字</p>
@@ -56,8 +94,24 @@
 
       <section class="scene split" aria-label="一起吃小龙虾">
         <div class="photo-pair">
-          <img src="./photos/peace-selfie.jpg" alt="小龙虾店里的比耶合照" loading="lazy" decoding="async" />
-          <img src="./photos/crayfish-dinner.jpg" alt="一桌小龙虾晚餐" loading="lazy" decoding="async" />
+          <img
+            src="./photos/peace-selfie.jpg"
+            srcset="./photos/mobile/peace-selfie.jpg 1200w, ./photos/peace-selfie.jpg 1900w"
+            sizes="(max-width: 420px) calc(100vw - 32px), 50vw"
+            data-mobile-src="./photos/mobile/peace-selfie.jpg"
+            alt="小龙虾店里的比耶合照"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            src="./photos/crayfish-dinner.jpg"
+            srcset="./photos/mobile/crayfish-dinner.jpg 1200w, ./photos/crayfish-dinner.jpg 2200w"
+            sizes="(max-width: 420px) calc(100vw - 32px), 44vw"
+            data-mobile-src="./photos/mobile/crayfish-dinner.jpg"
+            alt="一桌小龙虾晚餐"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div class="split-copy">
           <p class="kicker">一起吃饭</p>
@@ -69,7 +123,15 @@
       </section>
 
       <section class="scene memory align-bottom" aria-label="暴雨楼顶">
-        <img src="./photos/book-rooftop-rain.jpg" alt="暴雨里的 BOOK 灯牌" loading="lazy" decoding="async" />
+        <img
+          src="./photos/book-rooftop-rain.jpg"
+          srcset="./photos/mobile/book-rooftop-rain.jpg 1200w, ./photos/book-rooftop-rain.jpg 2200w"
+          sizes="100vw"
+          data-mobile-src="./photos/mobile/book-rooftop-rain.jpg"
+          alt="暴雨里的 BOOK 灯牌"
+          loading="lazy"
+          decoding="async"
+        />
         <div class="shade"></div>
         <div class="copy">
           <p class="kicker">暴雨楼顶</p>
@@ -81,7 +143,15 @@
       </section>
 
       <section class="scene memory" aria-label="福尔摩斯电话亭">
-        <img src="./photos/holmes-phone-booth.jpg" alt="福尔摩斯展的电话亭" loading="lazy" decoding="async" />
+        <img
+          src="./photos/holmes-phone-booth.jpg"
+          srcset="./photos/mobile/holmes-phone-booth.jpg 900w, ./photos/holmes-phone-booth.jpg 1650w"
+          sizes="100vw"
+          data-mobile-src="./photos/mobile/holmes-phone-booth.jpg"
+          alt="福尔摩斯展的电话亭"
+          loading="lazy"
+          decoding="async"
+        />
         <div class="shade"></div>
         <div class="copy">
           <p class="kicker">电话亭和马车</p>
@@ -94,8 +164,24 @@
 
       <section class="scene split reverse" aria-label="调香体验">
         <div class="photo-pair">
-          <img src="./photos/perfume-lab.jpg" alt="一起调香的桌面" loading="lazy" decoding="async" />
-          <img src="./photos/perfumer-certificate.jpg" alt="初级调香师证书" loading="lazy" decoding="async" />
+          <img
+            src="./photos/perfume-lab.jpg"
+            srcset="./photos/mobile/perfume-lab.jpg 1200w, ./photos/perfume-lab.jpg 2200w"
+            sizes="(max-width: 420px) calc(100vw - 32px), 50vw"
+            data-mobile-src="./photos/mobile/perfume-lab.jpg"
+            alt="一起调香的桌面"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            src="./photos/perfumer-certificate.jpg"
+            srcset="./photos/mobile/perfumer-certificate.jpg 1200w, ./photos/perfumer-certificate.jpg 2200w"
+            sizes="(max-width: 420px) calc(100vw - 32px), 44vw"
+            data-mobile-src="./photos/mobile/perfumer-certificate.jpg"
+            alt="初级调香师证书"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div class="split-copy">
           <p class="kicker">调香那天</p>
@@ -107,7 +193,15 @@
       </section>
 
       <section class="scene memory align-bottom" aria-label="西湾红树林">
-        <img src="./photos/west-bay-mangrove-sky.jpg" alt="西湾红树林海边天空" loading="lazy" decoding="async" />
+        <img
+          src="./photos/west-bay-mangrove-sky.jpg"
+          srcset="./photos/mobile/west-bay-mangrove-sky.jpg 1200w, ./photos/west-bay-mangrove-sky.jpg 2200w"
+          sizes="100vw"
+          data-mobile-src="./photos/mobile/west-bay-mangrove-sky.jpg"
+          alt="西湾红树林海边天空"
+          loading="lazy"
+          decoding="async"
+        />
         <div class="shade"></div>
         <div class="copy">
           <p class="kicker">海边的风</p>
@@ -119,7 +213,15 @@
       </section>
 
       <section class="scene memory" aria-label="哈哈镜自拍">
-        <img src="./photos/mirror-car-show.jpg" alt="车展哈哈镜自拍" loading="lazy" decoding="async" />
+        <img
+          src="./photos/mirror-car-show.jpg"
+          srcset="./photos/mobile/mirror-car-show.jpg 900w, ./photos/mirror-car-show.jpg 1650w"
+          sizes="100vw"
+          data-mobile-src="./photos/mobile/mirror-car-show.jpg"
+          alt="车展哈哈镜自拍"
+          loading="lazy"
+          decoding="async"
+        />
         <div class="shade"></div>
         <div class="copy">
           <p class="kicker">不好好拍照的瞬间</p>
